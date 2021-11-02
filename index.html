@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--Based on https://github.com/hellt/pycatj-web/tree/master/pycatj-web-->
+    
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+    <title>&ltTuple&gt | Azure Account Authentication for Illumina BaseSpace</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.css" rel="stylesheet">
+    <!-- <link href="css/mdb.min.css" rel="stylesheet"> -->
+    <!-- Your custom styles (optional) -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body style="background: url('img/small-dna-background_blue.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; background-size: cover; -o-background-size: cover;">
+    <!--Main Navigation-->
+    <header>
+
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark blue scrolling-navbar">
+            <h1 class="navbar-brand">
+                <a href="https://www.tuple.xyz" target="_blank">
+                    <!-- <img src="logo_white.png" height="40px" style="margin-right: 10px;"> -->
+                    &nbsp <span style="font-family:Righteous,sans-serif; color:white">&lt;Tuple&gt;</span>
+                </a>
+                    <strong> ｜ Azure Account Authentication for Illumina BaseSpace</strong>
+                </h1>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-toggle="modal" data-target="#basicExampleModal">About</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav nav-flex-icons">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/tuplexyz" target="_blank">
+                            <i class="fab fa-github"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.linkedin.com/company/tuplexyz/" target="_blank">
+                            <i class="fab fa-linkedin"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+    </header>
+    <!--Main Navigation-->
+    <main>
+        <!-- Start your project here-->
+        <div class="container-fluid">
+            <div class="row mt-5 pt-5">
+                <div class="col-3">
+                    <h2>Step 1: <small class="text-muted">Authenticate</small></h2>
+                    <p>This step generates the authentication URI from Illumina BaseSpace for use in your Azure account.</p>
+                </div>
+                <div class="col-4">
+                    <div class="form-group blue-border-focus">
+                        <label for="service_url_input"><span style="font-family:Righteous,sans-serif">azbasespace</span> Service URL:</label>
+                        <input type="text" class="form-control" id="service_url_input" placeholder="https://mycompany-azbasespace.azurewebsites.net">
+                      </div>
+                    <button type="button" id="auth_gen_btn" class="btn btn-primary">Generate Authentication URI</button>
+                </div>
+                <div class="col-4">
+                    <div id="step1output" class="form-group blue-border-focus d-none">
+                        
+                        <label for="auth_uri_out">Authentication URI:</label>
+                        <input class="form-control text-monospace" id="auth_uri_out" readonly
+                            placeholder="Your authentication URI will be shown here." style="font-size: 0.8rem">
+                        </input>
+                    </div>
+                    <div class="form-group blue-border-focus">
+                        <button type="button" id="auth_nav_btn" class="btn btn-danger" disabled>Authenticate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-3">
+                    <h2>Step 2: <small class="text-muted">Get Access Token</small></h2>
+                    <p>This step provides the access token needed to grant permissions for accessing individual projects in Illumina BaseSpace using the Azure Data Factory service.</p>
+                </div>
+                <div class="col-4">
+                    <div class="form-group blue-border-focus">
+                        <label for="device_code_out">Device Code:</label>
+                        <input class="form-control text-monospace" readonly id="device_code_out"
+                            placeholder="Your device code will be shown here." style="font-size: 0.8rem">
+                        </input>
+                    </div>
+                    <button type="button" id="token_gen_btn" class="btn btn-primary">Generate Access Token</button>
+                </div>
+                <div class="col-4">
+                    <div class="form-group blue-border-focus">
+                        <label for="token_out">Access Token:</label>
+                        <input class="form-control text-monospace" id="token_out"
+                            placeholder="Your access token will be shown here." style="font-size: 0.8rem">
+                        </input>
+						<p class="text-muted"><small>You can also past in a previous token to update project permissions.</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-3">
+                    <h2>Step 3: <small class="text-muted">List Projects</small></h2>
+                    <p>This step allows for individual projects to be selected to enable access from the Azure service.</p>
+                </div>
+                <div class="col-3">
+                    <button type="button" id="list_proj_btn" class="btn btn-primary">List Projects</button>
+                    <div id="step3output" class="form-group blue-border-focus d-none">
+                        <label for="proj_out">Projects:</label>
+                        <textarea class="form-control text-monospace" readonly id="proj_out" rows=3
+                            placeholder="Your projects will be listed here." style="font-size: 0.8rem">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="blue-border-focus">
+                        <table class="table d-none" id="proj_table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="text-center" data-field="Id">Project ID</th>
+                                    <th class="text-center" data-field="Name">Project Name</th>
+                                    <th class="text-center" data-field="Auth">Grant Access?</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-3">
+                    <h2>Step 4: <small class="text-muted">Authenticate for Project-Level Access</small></h2>
+                    <p>This step grants access to the previously selected BaseSpace Projects to Azure.</p>
+                </div>
+                <div class="col-4">
+                    <button type="button" id="auth_proj_btn" class="btn btn-primary">Generate Project-Level Auth URI</button>
+                    <div id="step4outputa" class="form-group blue-border-focus d-none">
+                        <label for="proj_ids_out">Granting Access to Project IDs:</label>
+                        <textarea class="form-control text-monospace" readonly id="proj_ids_out" rows=2
+                            placeholder="Your selected project IDs will be listed here." style="font-size: 0.8rem">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div id="step4outputb" class="form-group blue-border-focus d-none">
+                        <label for="auth_uri_proj_out">Project Authentication URI:</label>
+                        <input class="form-control text-monospace" id="auth_uri_proj_out" readonly
+                            placeholder="Your project-level authentication URI will be shown here." style="font-size: 0.8rem">
+                        </input>
+                    </div>
+                    <div class="form-group blue-border-focus">
+                        <button type="button" id="auth_nav_proj_btn" class="btn btn-danger" disabled>Authenticate Projects</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-6">
+                    <h2>All Done!</h2>
+                    <p>Once you've made it through steps 1-4, the <span style="font-family:Righteous,sans-serif">azbasespace</span> connector has been configured with your Illumina BaseSpace account.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+	<hr>
+
+    <footer class="footer fixed-bottom" style="background-color: #ffffff; bottom: 0; height: 60px; line-height: 60px; padding: 0 15px; position: relative;">
+        <p class="float-right"><a href="#">Back to top</a></p>
+        <p class="text-muted">Made with &hearts; by <span style="font-family:Righteous,sans-serif">&lt;Tuple&gt;</span>, Copyright &copy 2021 · <a href="" target="_blank">Privacy</a> · <a href="mailto:contact@tuple.xyz" target="_blank">Contact Us</a></p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <!-- JQuery -->
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <!-- Bootstrap tooltips -->
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <!-- Bootstrap core JavaScript -->
+    <!-- <script type="text/javascript" src="js/bootstrap.min.js"></script> -->
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+    <!-- MDB core JavaScript -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <!-- authentication JavaScript -->
+    <script type="text/javascript" src="js/auth.js"></script>
+
+</body>
+<!-- Modal -->
+<div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">About This Tool</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true">&times;</span>
+        		</button>
+            </div>
+            <div class="modal-body">
+                <p>This site provides an easy-to-use UI for authenticating the <span style="font-family:Righteous,sans-serif">&lt;Tuple&gt;</span> Azure Connector application with Illumina BaseSpace.</p>
+                <a href="" target="_blank">
+                    <button type="button" class="btn btn-primary">Learn More</button>
+                </a>
+
+                <a href="www.tuple.xyz" target="_blank">
+                    <img src="img/tuple_logo_bk.png" height="60px" style="float: right;">
+                </a>
+								
+				<hr>
+				<p><small>Illumina® and BaseSpace® are registered trademarks of Illumina, Inc.<br>
+					<span style="font-family:Righteous,sans-serif">&lt;Tuple&gt;</span> nor this data connector are affiliated or endorsed by Illumina.</small>
+				</p>
+                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Show debug text" style="float: right;">
+                    <button type="button" id="show_debug_btn" class="btn-sm btn-outline-Secondary">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </span>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>
