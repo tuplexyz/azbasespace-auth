@@ -24,25 +24,19 @@ $(function () {
     // Get device_code and verification_with_code_uri link
     $('#auth_gen_btn').click(function () {
         var data = {}
-        // if ($('#yaml_switch').prop("checked")) {
-        //     data["pycatj_data"] = $('#in_form').val()
-        // } else {
-        //     data["pycatj_data"] = JSON.parse($('#in_form').val())
-        // }
+        var api_url =  $('#service_url_input').val() + "/api/auth_url"
 
-        data["client_id"] = $('#service_url_input').val()
-
-        // console.log(data)
+        console.log(api_url)
         // var body = JSON.stringify(data)
 
         var settings = {
-            "url": $('#service_url_input').val() + '/api/auth_url', 
+            "url": api_url,
             "method": "GET",
             "timeout": 0,
             "headers": {
               "Content-Type": "application/x-www-form-urlencoded"
             },
-            "data": {}
+            "data": data
           };
           $.ajax(settings).done(function (response) {
             // console.log(response);
@@ -63,14 +57,14 @@ $(function () {
     // Use device_code and to get auth token
     $('#token_gen_btn').click(function () {
         var data = {}
-
         data["device_code"] = $('#device_code_out').val()
+        var api_url = $('#service_url_input').val() + '/api/access_token'
 
         // console.log(data)
         // var body = JSON.stringify(data)
 
         var settings = {
-            "url": $('#service_url_input').val() + '/api/access_token',
+            "url": api_url,
             "method": "GET",
             "timeout": 0,
             "headers": {
@@ -91,11 +85,11 @@ $(function () {
     // List Projects
     $('#list_proj_btn').click(function () {
       var data = {}
-
       data["access_token"] = $('#token_out').val()
+      var api_url = $('#service_url_input').val() + '/api/list_projects'
 
       var settings = {
-          "url": $('#service_url_input').val() + '/api/list_projects',
+          "url": api_url,
           "method": "GET",
           "timeout": 0,
           "headers": {
