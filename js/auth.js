@@ -24,19 +24,19 @@ $(function () {
     // Get device_code and verification_with_code_uri link
     $('#auth_gen_btn').click(function () {
         var data = {}
-        var api_url =  $('#service_url_input').val() + "/api/auth_url"
+        var api_url =  $('#service_url_input').val() + "/api/auth_uri"
 
         console.log(api_url)
-        // var body = JSON.stringify(data)
 
         var settings = {
             "url": api_url,
             "method": "GET",
             "timeout": 0,
             "headers": {
-              "Content-Type": "application/x-www-form-urlencoded"
+              // "Content-Type": "application/x-www-form-urlencoded"
+              "Content-Type": "application/json"
             },
-            "data": data
+            "data": JSON.stringify(data)
           };
           $.ajax(settings).done(function (response) {
             // console.log(response);
@@ -68,12 +68,13 @@ $(function () {
             "method": "GET",
             "timeout": 0,
             "headers": {
-              "Content-Type": "application/x-www-form-urlencoded"
+              "Content-Type": "application/json"
             },
-            "data": {
+            "data": JSON.stringify({
               "device_code": data["device_code"]
-            }
+            }),
           };
+
 
           $.ajax(settings).done(function (response) {
             // console.log(response);
@@ -95,9 +96,9 @@ $(function () {
           "headers": {
             "Content-Type": "application/x-www-form-urlencoded"
           },
-          "data": {
+          "data": JSON.stringify({
             "access_token": data["access_token"]
-          }
+          })
         };
 
         $.ajax(settings).done(function (response) {
