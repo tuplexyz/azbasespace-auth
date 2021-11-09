@@ -56,9 +56,9 @@ $(function () {
 
     // Use device_code and to get auth token
     $('#token_gen_btn').click(function () {
-        var data = {}
-        data["device_code"] = $('#device_code_out').val()
-        var api_url = $('#service_url_input').val() + '/api/access_token'
+        // var data = {}
+        // data["device_code"] = $('#device_code_out').val()
+        var api_url = $('#service_url_input').val() + '/api/access_token?device_code=' + $('#device_code_out').val()
 
         // console.log(data)
         // var body = JSON.stringify(data)
@@ -70,9 +70,9 @@ $(function () {
             "headers": {
               "Content-Type": "application/json"
             },
-            "data": JSON.stringify({
-              "device_code": data["device_code"]
-            }),
+            // "data": {
+            //   "device_code": data["device_code"]
+            // },
           };
 
 
@@ -85,9 +85,9 @@ $(function () {
 
     // List Projects
     $('#list_proj_btn').click(function () {
-      var data = {}
-      data["access_token"] = $('#token_out').val()
-      var api_url = $('#service_url_input').val() + '/api/list_projects'
+      // var data = {}
+      // data["access_token"] = $('#token_out').val()
+      var api_url = $('#service_url_input').val() + '/api/list_projects?access_token=' + $('#token_out').val()
 
       var settings = {
           "url": api_url,
@@ -96,9 +96,9 @@ $(function () {
           "headers": {
             "Content-Type": "application/x-www-form-urlencoded"
           },
-          "data": JSON.stringify({
-            "access_token": data["access_token"]
-          })
+          // "data": JSON.stringify({
+          //   "access_token": data["access_token"]
+          // })
         };
 
         $.ajax(settings).done(function (response) {
