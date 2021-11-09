@@ -88,27 +88,33 @@ $(function () {
       // var data = {}
       // data["access_token"] = $('#token_out').val()
       var api_url = $('#service_url_input').val() + '/api/list_projects?access_token=' + $('#token_out').val()
-
+      console.log(api_url)
       var settings = {
           "url": api_url,
           "method": "GET",
           "timeout": 0,
           "headers": {
-            "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/json"
           },
+          dataType: "json"
           // "data": JSON.stringify({
           //   "access_token": data["access_token"]
           // })
         };
 
         $.ajax(settings).done(function (response) {
-
-          var proj_data = JSON.parse(response.output);
-          for(var key in proj_data){
-            var item_id = proj_data[key]['Id']
-            var item_name = proj_data[key]['Name']
+          console.log(response)
+          var proj_data = response
+          
+          // var proj_data = response.output
+          
+          for(var proj in proj_data){
+            console.log(proj)
+            var item_id = proj_data[proj]['Id']
+            var item_name = proj_data[proj]['Name']
+            console.log(item_name)
             var authLink = '<input id="auth_check_'.concat(item_id,'" name="auth_check" value="',item_id ,'" type="checkbox">');
-            proj_data[key]['Auth'] = authLink;
+            proj_data[proj]['Auth'] = authLink;
           }
 
           $(function () {
@@ -129,100 +135,44 @@ $(function () {
     });
 
 
-
-    // $('#list_proj_btn').click(function () {
-
-    //     $.support.cors = true
-
-    //     var bear_token = "Bearer ".concat($('#token_out').val())
-    //     // console.log(bear_token)
-    //     // var body = JSON.stringify(data)
-        
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "php/get_projects.php",
-    //         data: {token: bear_token},
-    //         dataType: 'JSON', 
-    //         success: function(response){
-    //             // console.log(response.output);
-    //             // console.log(JSON.parse(response.output)['Response']['Items']);
-
-    //             $('#proj_out').val(response.output);
-
-    //             var proj_data = JSON.parse(response.output)['Response']['Items'];
-
-    //             for(var key in proj_data){
-    //                 var item_id = proj_data[key]['Id']
-    //                 var authLink = '<input id="auth_check_'.concat(item_id,'" name="auth_check" value="',item_id ,'" type="checkbox">');
-    //                 proj_data[key]['Auth'] = authLink;
-
-    //             }
-
-    //             console.log(proj_data)
-
-    //             $(function () {
-		// 			// Unhide the table
-		// 			$('#proj_table').removeClass("d-none");
-		// 			// Fill the table with project results
-    //                 $('#proj_table').bootstrapTable({
-    //                     data: proj_data,
-    //                     formatLoadingMessage: function() {
-    //                         return '';
-    //                     }
-
-    //                 });
-		// 			$("#proj_table").bootstrapTable("hideLoading");
-    //             });
-    //         }
-    //     }); 
-    // });
-    
-    // List Select Projects to Auth
+    // Get device_code and verification_with_code_uri link
     $('#auth_proj_btn').click(function () {
-        var data = {};
+      // var data = {}
+      var ids_arr = [];
+      
+      // For each checked project, add its ID to the scope list
+      $("input:checkbox[name=auth_check]:checked").each(function(){
+          ids_arr.push($(this).val());
+      });
+      
+      var proj_ids_csv = ids_arr.toString();
+      
+      console.log(proj_ids_csv);
+      
+      $('#proj_ids_out').val(proj_ids_csv);
 
-        data["client_id"] = $('#client_id_input').val();
-        
-        var ids_arr = [];
-        var ids_scope_arr = [];
-        
-        // For each checked project, add its ID to the scope list
-        $("input:checkbox[name=auth_check]:checked").each(function(){
-            ids_arr.push($(this).val());
-            ids_scope_arr.push("read project ".concat($(this).val()));
+      var api_url =  $('#service_url_input').val() + "/api/project_auth?project_ids=" + proj_ids_csv
+
+      console.log(api_url)
+
+      var settings = {
+          "url": api_url,
+          "method": "GET",
+          "timeout": 0,
+          "headers": {
+            // "Content-Type": "application/x-www-form-urlencoded"
+            "Content-Type": "application/json"
+          },
+          // "data": JSON.stringify(data)
+        };
+        $.ajax(settings).done(function (response) {
+          // console.log(response);
+          $('#auth_uri_proj_out').val(response.verification_with_code_uri)
+          $('#device_proj_code_out').val(response.device_code)
+          // Enable the navigation button
+          $('#auth_nav_proj_btn').removeAttr('disabled')
         });
-        
-        // Also add `browse global`
-        ids_scope_arr.push("browse global")
-        
-        var proj_ids_csv = ids_arr.toString();
-        var proj_ids_scope_csv = ids_scope_arr.toString();
-        
-        console.log(proj_ids_csv);
-        console.log(proj_ids_scope_csv);
-        
-        $('#proj_ids_out').val(proj_ids_csv);
-        
-        var settings = {
-            "url": "https://api.basespace.illumina.com/v1pre3/oauthv2/deviceauthorization",
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            "data": {
-              "client_id": data["client_id"],
-              "response_type": "device_code",
-              "scope": proj_ids_scope_csv
-            }
-          };
-          $.ajax(settings).done(function (response) {
-            // console.log(response);
-            $('#auth_uri_proj_out').val(response.verification_with_code_uri)
-            // Enable the navigation button
-            $('#auth_nav_proj_btn').removeAttr('disabled')
-          });
-    });
+  });
     
     // Navigate to Project-Level Authentication URI Link
     $('#auth_nav_proj_btn').click(function () {
@@ -230,3 +180,31 @@ $(function () {
         window.open(URL, '_blank');
     });
 });
+
+    // Use device_code and to get auth token (project-level)
+    $('#proj_token_gen_btn').click(function () {
+      // var data = {}
+      // data["device_code"] = $('#device_proj_code_out').val()
+      var api_url = $('#service_url_input').val() + '/api/access_token?device_code=' + $('#device_proj_code_out').val()
+
+      // console.log(data)
+      // var body = JSON.stringify(data)
+
+      var settings = {
+          "url": api_url,
+          "method": "GET",
+          "timeout": 0,
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          // "data": {
+          //   "device_code": data["device_code"]
+          // },
+        };
+
+
+        $.ajax(settings).done(function (response) {
+          // console.log(response);
+          $('#proj_token_out').val(response.access_token)
+        });
+  });

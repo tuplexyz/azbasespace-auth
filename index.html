@@ -94,7 +94,7 @@
             <div class="row mt-5">
                 <div class="col-3">
                     <h2>Step 2: <small class="text-muted">Get Access Token</small></h2>
-                    <p>This step provides the access token needed to grant permissions for accessing individual projects in Illumina BaseSpace using the Azure Data Factory service.</p>
+                    <p>This step provides the temporary access token needed to grant permissions for accessing Illumina BaseSpace using the Azure Data Factory service.</p>
                 </div>
                 <div class="col-4">
                     <div class="form-group blue-border-focus">
@@ -103,15 +103,15 @@
                             placeholder="Your device code will be shown here." style="font-size: 0.8rem">
                         </input>
                     </div>
-                    <button type="button" id="token_gen_btn" class="btn btn-primary">Generate Access Token</button>
+                    <button type="button" id="token_gen_btn" class="btn btn-primary">Generate Temporary Access Token</button>
                 </div>
                 <div class="col-4">
                     <div class="form-group blue-border-focus">
-                        <label for="token_out">Access Token:</label>
+                        <label for="token_out">Temporary Access Token:</label>
                         <input class="form-control text-monospace" id="token_out"
                             placeholder="Your access token will be shown here." style="font-size: 0.8rem">
                         </input>
-						<p class="text-muted"><small>You can also past in a previous token to update project permissions.</small></p>
+						<p class="text-muted"><small>You can also paste in a previous token to update project permissions.</small></p>
                     </div>
                 </div>
             </div>
@@ -180,11 +180,42 @@
                 </div>
             </div>
         </div>
+
+        <hr>
+
+        <div class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-3">
+                    <h2>Step 5: <small class="text-muted">Get Final Access Token</small></h2>
+                    <p>This step, similar to Step 2, provides the final access token needed to grant permissions for accessing individual projects in Illumina BaseSpace using the Azure Data Factory service.</p>
+                </div>
+                <div class="col-4">
+                    <div class="form-group blue-border-focus">
+                        <label for="device_proj_code_out">Device Code:</label>
+                        <input class="form-control text-monospace" readonly id="device_proj_code_out"
+                            placeholder="Your device code will be shown here." style="font-size: 0.8rem">
+                        </input>
+                    </div>
+                    <button type="button" id="proj_token_gen_btn" class="btn btn-primary">Generate Final Access Token</button>
+                </div>
+                <div class="col-4">
+                    <div class="form-group blue-border-focus">
+                        <label for="proj_token_out">Final Access Token:</label>
+                        <input class="form-control text-monospace" id="proj_token_out"
+                            placeholder="Your access token will be shown here." style="font-size: 0.8rem">
+                        </input>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
         <div class="container-fluid">
             <div class="row mt-5">
                 <div class="col-6">
                     <h2>All Done!</h2>
-                    <p>Once you've made it through steps 1-4, the <span style="font-family:Righteous,sans-serif">azbasespace</span> connector has been configured with your Illumina BaseSpace account.</p>
+                    <p>Once you've made it through steps 1-5, the <span style="font-family:Righteous,sans-serif">azbasespace</span> connector has been configured with your Illumina BaseSpace account.<br>Make sure save Final Access Token from above. 🧬</p>
                 </div>
             </div>
         </div>
@@ -225,9 +256,9 @@
             </div>
             <div class="modal-body">
                 <p>This site provides an easy-to-use UI for authenticating the <span style="font-family:Righteous,sans-serif">&lt;Tuple&gt;</span> Azure Connector application with Illumina BaseSpace.</p>
-                <a href="" target="_blank">
+                <!-- <a href="" target="_blank">
                     <button type="button" class="btn btn-primary">Learn More</button>
-                </a>
+                </a> -->
 
                 <a href="www.tuple.xyz" target="_blank">
                     <img src="img/tuple_logo_bk.png" height="60px" style="float: right;">
